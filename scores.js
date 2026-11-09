@@ -68,5 +68,5 @@ const HighScores = (() => {
     load();
   }
 
-  return {init, offer, hide, load};
+  return {init, offer, hide, load, url: SUPABASE_URL, key: SUPABASE_KEY};
 })();

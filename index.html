@@ -34,7 +34,7 @@ h1 { margin: 0; font-size: clamp(2.2rem, 9vw, 3.2rem); font-weight: 700; letter-
 h1 span { color: var(--sun); }
 header p { margin: 0; font-size: 1.05rem; opacity: .75; }
 .games { display: grid; grid-template-columns: 1fr; gap: 16px; }
-@media (min-width: 560px) { .games { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 820px) { .wrap { max-width: 980px; } .games { grid-template-columns: repeat(3, 1fr); } }
 .game {
   display: flex; flex-direction: column; gap: 10px; min-width: 0;
   padding: 12px 12px 14px; color: inherit; text-decoration: none;
@@ -42,6 +42,7 @@ header p { margin: 0; font-size: 1.05rem; opacity: .75; }
 }
 .game.snake { --edge: var(--hedge); }
 .game.breakout { --edge: var(--frame); }
+.game.battle { --edge: #b9801a; }
 .game:hover { transform: translateY(-2px); box-shadow: 0 7px 0 var(--edge); }
 .game:active { transform: translateY(5px); box-shadow: 0 0 0 var(--edge); }
 .game:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
@@ -72,6 +73,12 @@ header p { margin: 0; font-size: 1.05rem; opacity: .75; }
       <img src="images/breakout.jpg" width="832" height="520" alt="Breakout Remake: the spinning machine-gun ball shooting colored bricks">
       <h2>Breakout Remake</h2>
       <p>Bounce the ball, smash the bricks, and catch the machine gun for a spinning bullet storm.</p>
+      <span class="go">Play ▶</span>
+    </a>
+    <a class="game battle" href="battle.html">
+      <img src="images/battle.jpg" width="832" height="520" alt="Battle Balls: Fire Ball and Poop Ball fighting in the arena while a fireball flies">
+      <h2>Battle Balls</h2>
+      <p>Pick two powered-up balls, drop them into the arena and watch them battle. Best of 3.</p>
       <span class="go">Play ▶</span>
     </a>
   </div>
