@@ -45,7 +45,7 @@ header p { margin: 0; font-size: 1.05rem; opacity: .75; }
 .game:hover { transform: translateY(-2px); box-shadow: 0 7px 0 var(--edge); }
 .game:active { transform: translateY(5px); box-shadow: 0 0 0 var(--edge); }
 .game:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
-.game svg { display: block; width: 100%; height: auto; border-radius: 12px; }
+.game img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 12px; }
 .game h2 { margin: 0; font-size: 1.45rem; }
 .game p { margin: 0; font-size: .98rem; line-height: 1.4; opacity: .8; }
 .go { align-self: flex-start; font-weight: 600; font-size: 1.05rem; padding: 6px 18px; border-radius: 12px; color: #fff; background: var(--edge); }
@@ -62,48 +62,14 @@ header p { margin: 0; font-size: 1.05rem; opacity: .75; }
 
   <div class="games">
     <a class="game snake" href="snake.html">
-      <svg viewBox="0 0 160 100" role="img" aria-label="A red dragon chasing an apple across the grass">
-        <defs>
-          <pattern id="chk" width="20" height="20" patternUnits="userSpaceOnUse">
-            <rect width="20" height="20" fill="#a8d672"/>
-            <rect width="10" height="10" fill="#9ccc66"/>
-            <rect x="10" y="10" width="10" height="10" fill="#9ccc66"/>
-          </pattern>
-        </defs>
-        <rect width="160" height="100" fill="url(#chk)"/>
-        <path d="M18 78 H58 V50 H98 V32" fill="none" stroke="#7d1010" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M18 78 H58 V50 H98 V32" fill="none" stroke="#d7261e" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M18 78 H58 V50 H98 V32" fill="none" stroke="#f5c242" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="98" cy="28" r="8" fill="#d7261e" stroke="#7d1010" stroke-width="1.5"/>
-        <path d="M92 24 L88 16 M104 24 L108 16" stroke="#f3e2b0" stroke-width="2.4" stroke-linecap="round"/>
-        <circle cx="95" cy="25" r="2.4" fill="#fff"/><circle cx="101" cy="25" r="2.4" fill="#fff"/>
-        <circle cx="95" cy="24.4" r="1.2" fill="#1a1a1a"/><circle cx="101" cy="24.4" r="1.2" fill="#1a1a1a"/>
-        <circle cx="128" cy="34" r="6" fill="#e0402f"/><circle cx="134" cy="34" r="6" fill="#e0402f"/>
-        <ellipse cx="136" cy="25" rx="4" ry="2" fill="#3f8a2a" transform="rotate(-28 136 25)"/>
-        <ellipse cx="40" cy="22" rx="8" ry="3.6" fill="#7a4a24"/>
-        <ellipse cx="40" cy="17.5" rx="5.5" ry="3" fill="#7a4a24"/>
-        <ellipse cx="40" cy="13.5" rx="3.4" ry="2.6" fill="#7a4a24"/>
-      </svg>
+      <img src="images/snake.jpg" width="800" height="500" alt="Snake Remake: a red dragon chasing an apple past falling poop and a unicorn power-up">
       <h2>Snake Remake</h2>
       <p>Steer a hungry dragon to the apples, dodge falling poop and grab rainbow power-ups.</p>
       <span class="go">Play ▶</span>
     </a>
 
     <a class="game breakout" href="breakout.html">
-      <svg viewBox="0 0 160 100" role="img" aria-label="A ball breaking a wall of colored bricks above a paddle">
-        <rect width="160" height="100" fill="#1c1840"/>
-        <g>
-          <rect x="6" y="10" width="22" height="7" rx="2" fill="#ff4d6d"/><rect x="31" y="10" width="22" height="7" rx="2" fill="#ff4d6d"/><rect x="56" y="10" width="22" height="7" rx="2" fill="#ff4d6d"/><rect x="81" y="10" width="22" height="7" rx="2" fill="#ff4d6d"/><rect x="106" y="10" width="22" height="7" rx="2" fill="#ff4d6d"/><rect x="131" y="10" width="22" height="7" rx="2" fill="#ff4d6d"/>
-          <rect x="6" y="20" width="22" height="7" rx="2" fill="#ff8c42"/><rect x="31" y="20" width="22" height="7" rx="2" fill="#ff8c42"/><rect x="81" y="20" width="22" height="7" rx="2" fill="#ff8c42"/><rect x="106" y="20" width="22" height="7" rx="2" fill="#ff8c42"/><rect x="131" y="20" width="22" height="7" rx="2" fill="#ff8c42"/>
-          <rect x="6" y="30" width="22" height="7" rx="2" fill="#ffd23f"/><rect x="31" y="30" width="22" height="7" rx="2" fill="#ffd23f"/><rect x="106" y="30" width="22" height="7" rx="2" fill="#ffd23f"/><rect x="131" y="30" width="22" height="7" rx="2" fill="#ffd23f"/>
-          <rect x="6" y="40" width="22" height="7" rx="2" fill="#5dd39e"/><rect x="131" y="40" width="22" height="7" rx="2" fill="#5dd39e"/>
-        </g>
-        <path d="M90 58 L80 44 M90 58 L100 72 M90 58 L104 50 M90 58 L76 66" stroke="#ffd23f" stroke-width="2.4" stroke-linecap="round"/>
-        <circle cx="90" cy="58" r="6" fill="#8a929c"/><circle cx="90" cy="58" r="2.4" fill="#ff8c42"/>
-        <circle cx="40" cy="66" r="9" fill="#ff8c42" stroke="#fff" stroke-width="1.5"/>
-        <path d="M33 64 h10 v-1.6 h5 v2.4 h-5 v1.6 h-3 l1 4 h-2.4 l-1 -4 h-1.6 l-1.4 2 h-1.6z" fill="#fff"/>
-        <rect x="62" y="88" width="38" height="6" rx="3" fill="#4cc9f0"/>
-      </svg>
+      <img src="images/breakout.jpg" width="832" height="520" alt="Breakout Remake: the spinning machine-gun ball shooting colored bricks">
       <h2>Breakout Remake</h2>
       <p>Bounce the ball, smash the bricks, and catch the machine gun for a spinning bullet storm.</p>
       <span class="go">Play ▶</span>
