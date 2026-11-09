@@ -69,6 +69,20 @@ button:focus-visible { outline: 3px solid var(--snake); outline-offset: 2px; }
 #down { grid-column: 2; grid-row: 2; }
 #right { grid-column: 3; grid-row: 2; }
 .hint { text-align: center; font-size: .85rem; opacity: .7; margin: 0; }
+.hs-form { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; max-width: 260px; }
+.hs-form label { font-weight: 600; }
+.hs-row { display: flex; gap: 6px; width: 100%; }
+.hs-row input { flex: 1; min-width: 0; font: 600 1rem var(--display); padding: 8px 10px; border-radius: 10px; border: 2px solid var(--hedge); background: #fff; color: #2f3a1f; }
+.hs-row button { padding: 0 14px; font-size: 1rem; }
+.overlay .hs-msg { margin: 0; font-size: .9rem; min-height: 1.2em; }
+.top { background: var(--btn); border: 2px solid var(--hedge); border-radius: 14px; padding: 10px 14px; }
+.top h2 { margin: 0 0 6px; font-size: 1.1rem; }
+.top ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.top li { display: grid; grid-template-columns: 2ch 1fr auto; gap: 10px; padding: 4px 0; font-variant-numeric: tabular-nums; border-bottom: 1px dashed rgba(47, 58, 31, .18); }
+.top li:last-child { border-bottom: 0; }
+.hs-rank { opacity: .6; text-align: right; }
+.hs-name { overflow-wrap: anywhere; }
+.top li.hs-empty { display: block; opacity: .7; }
 @media (prefers-reduced-motion: reduce) { button:active { transform: none; } }
 </style>
 </head>
@@ -88,6 +102,11 @@ button:focus-visible { outline: 3px solid var(--snake); outline-offset: 2px; }
     <div class="overlay" id="overlay">
       <h2 id="ovTitle">Hungry dragon</h2>
       <p id="ovText">Eat apples to grow. Dodge falling poop — each hit costs an apple. Grab surprises: 🦄 rainbow power, ⭐ poop blaster, and bonus apple bowls, piles and treasure chests.</p>
+      <form class="hs-form" id="hsForm" hidden>
+        <label for="hsName">Top 10 score! Your name:</label>
+        <div class="hs-row" id="hsRow"><input id="hsName" maxlength="12" autocomplete="off" enterkeyhint="done"><button type="submit">Save</button></div>
+        <p class="hs-msg" id="hsMsg" aria-live="polite"></p>
+      </form>
       <button class="play" id="play">Play</button>
     </div>
   </div>
@@ -99,8 +118,13 @@ button:focus-visible { outline: 3px solid var(--snake); outline-offset: 2px; }
     <button id="right" aria-label="Right">▶</button>
   </div>
   <p class="hint">Swipe on the board, tap the arrows, or use arrow keys / WASD. Space pauses.</p>
+  <section class="top" aria-labelledby="topTitle">
+    <h2 id="topTitle">Top 10</h2>
+    <ol id="hsList"><li class="hs-empty">Loading scores…</li></ol>
+  </section>
 </div>
 
+<script src="scores.js"></script>
 <script>
 const N = 17, CELL = 24;
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
@@ -259,10 +283,11 @@ function gameOver(why) {
   ovText.textContent = `You ate ${score} apple${score === 1 ? '' : 's'}.` + (score > 0 && score === best ? ' New best!' : '');
   playBtn.textContent = 'Play again';
   overlay.hidden = false; playBtn.focus();
+  HighScores.offer(score);
 }
 
 function start() {
-  reset(); running = true; paused = false; overlay.hidden = true;
+  reset(); running = true; paused = false; overlay.hidden = true; HighScores.hide();
   const now = performance.now();
   nowT = lastStep = lastFrame = now;
   nextPoopAt = now + 1500; nextItemAt = now + itemGap();
@@ -516,6 +541,7 @@ function drawHead(p, col, rb) {
 // ---------- input ----------
 const keys = {ArrowUp: [0,-1], ArrowDown: [0,1], ArrowLeft: [-1,0], ArrowRight: [1,0], w: [0,-1], s: [0,1], a: [-1,0], d: [1,0]};
 document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;   // typing a name
   const k = keys[e.key] || keys[e.key.toLowerCase()];
   if (k) { e.preventDefault(); turn(...k); }
   else if (e.key === ' ' && running) { e.preventDefault(); togglePause(); }
@@ -544,6 +570,7 @@ overlay.addEventListener('pointerdown', e => e.stopPropagation());
 document.addEventListener('visibilitychange', () => { if (document.hidden && running && !paused) togglePause(); });
 
 reset(); draw(1);
+HighScores.init('snake');
 requestAnimationFrame(frame);
 </script>
 

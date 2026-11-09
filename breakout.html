@@ -72,6 +72,20 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .controls button { height: 60px; font-size: 1.5rem; }
 .controls #launch { font-size: 1rem; }
 .hint { text-align: center; font-size: .85rem; opacity: .7; margin: 0; }
+.hs-form { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; max-width: 260px; }
+.hs-form label { font-weight: 600; }
+.hs-row { display: flex; gap: 6px; width: 100%; }
+.hs-row input { flex: 1; min-width: 0; font: 600 1rem var(--display); padding: 8px 10px; border-radius: 10px; border: 2px solid var(--frame); background: #fff; color: #2f3a1f; }
+.hs-row button { padding: 0 14px; font-size: 1rem; }
+.overlay .hs-msg { margin: 0; font-size: .9rem; min-height: 1.2em; }
+.top { background: var(--btn); border: 2px solid var(--frame); border-radius: 14px; padding: 10px 14px; }
+.top h2 { margin: 0 0 6px; font-size: 1.1rem; }
+.top ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.top li { display: grid; grid-template-columns: 2ch 1fr auto; gap: 10px; padding: 4px 0; font-variant-numeric: tabular-nums; border-bottom: 1px dashed rgba(47, 58, 31, .18); }
+.top li:last-child { border-bottom: 0; }
+.hs-rank { opacity: .6; text-align: right; }
+.hs-name { overflow-wrap: anywhere; }
+.top li.hs-empty { display: block; opacity: .7; }
 @media (prefers-reduced-motion: reduce) { button:active { transform: none; } }
 </style>
 </head>
@@ -92,6 +106,11 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
     <div class="overlay" id="overlay">
       <h2 id="ovTitle">Breakout Remake</h2>
       <p id="ovText">Bounce the ball to smash every brick. Catch the falling machine gun for 10 seconds of spinning firepower.</p>
+      <form class="hs-form" id="hsForm" hidden>
+        <label for="hsName">Top 10 score! Your name:</label>
+        <div class="hs-row" id="hsRow"><input id="hsName" maxlength="12" autocomplete="off" enterkeyhint="done"><button type="submit">Save</button></div>
+        <p class="hs-msg" id="hsMsg" aria-live="polite"></p>
+      </form>
       <button class="play" id="play">Play</button>
     </div>
   </div>
@@ -102,8 +121,13 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
     <button id="right" aria-label="Move right">▶</button>
   </div>
   <p class="hint">Hold the arrows or drag on the board to move. Tap the board or Launch to serve. Keyboard: ← → and Space.</p>
+  <section class="top" aria-labelledby="topTitle">
+    <h2 id="topTitle">Top 10</h2>
+    <ol id="hsList"><li class="hs-empty">Loading scores…</li></ol>
+  </section>
 </div>
 
+<script src="scores.js"></script>
 <script>
 const W = 400, H = 560;
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
@@ -203,10 +227,11 @@ function gameOver() {
   ovText.textContent = `You scored ${score} and reached level ${level}.` + (score > 0 && score === best ? ' New best!' : '');
   playBtn.textContent = 'Play again';
   overlay.hidden = false; playBtn.focus();
+  HighScores.offer(score);
 }
 
 function start() {
-  newGame(); running = true; paused = false; overlay.hidden = true;
+  newGame(); running = true; paused = false; overlay.hidden = true; HighScores.hide();
   last = performance.now();
 }
 
@@ -421,6 +446,7 @@ holdButton('left', -1); holdButton('right', 1);
 document.getElementById('launch').addEventListener('pointerdown', e => { e.preventDefault(); launch(); });
 
 document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;   // typing a name
   if (e.key === 'ArrowLeft' || e.key === 'a') { e.preventDefault(); hold = -1; targetX = null; }
   else if (e.key === 'ArrowRight' || e.key === 'd') { e.preventDefault(); hold = 1; targetX = null; }
   else if (e.key === ' ') { e.preventDefault(); launch(); }
@@ -441,6 +467,7 @@ overlay.addEventListener('pointerdown', e => e.stopPropagation());
 document.addEventListener('visibilitychange', () => { if (document.hidden && running && !paused) togglePause(); });
 
 newGame();
+HighScores.init('breakout');
 requestAnimationFrame(frame);
 </script>
 
