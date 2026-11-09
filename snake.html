@@ -258,7 +258,12 @@ function updatePoop(dt) {
       flash = nowT;
       if (score === 0) return gameOver('poop');
       setScore(score - 1);
-      if (snake.length > 7) { snake.pop(); if (prev.length > snake.length) prev.pop(); }
+      grow = 0;   // cancel growth still owed from bonus apples
+      for (let k = 0; k < 2 && snake.length > 7; k++) {   // lose the two pieces an apple gave you
+        const t = snake.pop();
+        shatter(t.x * CELL + CELL / 2, t.y * CELL + CELL / 2, ['#d7261e', '#f5c242', '#7d1010'], 8);
+      }
+      prev.length = Math.min(prev.length, snake.length);
     } else if (p.y > N) poops.splice(i, 1);
   }
 }
