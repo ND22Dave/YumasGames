@@ -75,6 +75,19 @@ button:focus-visible { outline: 3px solid var(--snake); outline-offset: 2px; }
 .hs-row button { padding: 0 14px; font-size: 1rem; }
 .overlay .hs-msg { margin: 0; font-size: .9rem; min-height: 1.2em; }
 .top { background: var(--btn); border: 2px solid var(--hedge); border-radius: 14px; padding: 10px 14px; }
+.best-btn span { white-space: nowrap; }
+.best-btn { cursor: pointer; box-shadow: 0 4px 0 var(--hedge); }
+.best-btn:active { transform: translateY(4px); box-shadow: 0 0 0 var(--hedge); }
+.top-pop {
+  position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
+  padding-block: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: rgba(20, 20, 30, .5);
+}
+.top-pop .top { width: 100%; max-width: 340px; max-height: 100%; overflow-y: auto; box-sizing: border-box; box-shadow: 0 6px 0 var(--hedge); }
+.top-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+.top-head h2 { margin: 0; }
+.top-close { font-size: .95rem; padding: 6px 14px; }
 .top h2 { margin: 0 0 6px; font-size: 1.1rem; }
 .top ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .top li { display: grid; grid-template-columns: 2ch 1fr auto; gap: 10px; padding: 4px 0; font-variant-numeric: tabular-nums; border-bottom: 1px dashed rgba(47, 58, 31, .18); }
@@ -92,7 +105,7 @@ button:focus-visible { outline: 3px solid var(--snake); outline-offset: 2px; }
     <div class="titles"><a class="back" href="index.html">‹ Menu</a><h1>Snake Remake</h1></div>
     <div class="scores">
       <div class="score"><span>Apples</span><b id="score">0</b></div>
-      <div class="score"><span>Best</span><b id="best">0</b></div>
+      <button class="score best-btn" id="bestBtn" aria-label="Best score. Show the Top 10"><span>Best 🏆</span><b id="best">0</b></button>
     </div>
   </header>
 
@@ -116,10 +129,12 @@ button:focus-visible { outline: 3px solid var(--snake); outline-offset: 2px; }
     <button id="down" aria-label="Down">▼</button>
     <button id="right" aria-label="Right">▶</button>
   </div>
-  <section class="top" aria-labelledby="topTitle">
-    <h2 id="topTitle">Top 10</h2>
-    <ol id="hsList"><li class="hs-empty">Loading scores…</li></ol>
-  </section>
+  <div class="top-pop" id="topPop" hidden>
+    <section class="top" role="dialog" aria-modal="true" aria-labelledby="topTitle">
+      <div class="top-head"><h2 id="topTitle">Top 10</h2><button class="top-close" id="topClose">Close</button></div>
+      <ol id="hsList"><li class="hs-empty">Loading scores…</li></ol>
+    </section>
+  </div>
 </div>
 
 <script src="scores.js"></script>
@@ -540,6 +555,7 @@ function drawHead(p, col, rb) {
 const keys = {ArrowUp: [0,-1], ArrowDown: [0,1], ArrowLeft: [-1,0], ArrowRight: [1,0], w: [0,-1], s: [0,1], a: [-1,0], d: [1,0]};
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT') return;   // typing a name
+  if (!topPop.hidden) { if (e.key === 'Escape') topPop.hidden = true; return; }
   const k = keys[e.key] || keys[e.key.toLowerCase()];
   if (k) { e.preventDefault(); turn(...k); }
   else if (e.key === ' ' && running) { e.preventDefault(); togglePause(); }
@@ -570,6 +586,15 @@ document.addEventListener('visibilitychange', () => { if (document.hidden && run
 reset(); draw(1);
 HighScores.init('snake');
 requestAnimationFrame(frame);
+
+// Top 10 popup opens from the Best button
+const topPop = document.getElementById('topPop');
+document.getElementById('bestBtn').addEventListener('click', () => {
+  if (running && !paused) togglePause();
+  HighScores.load(); topPop.hidden = false; document.getElementById('topClose').focus();
+});
+document.getElementById('topClose').addEventListener('click', () => { topPop.hidden = true; });
+topPop.addEventListener('click', e => { if (e.target === topPop) topPop.hidden = true; });
 </script>
 
 </body>

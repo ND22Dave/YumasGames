@@ -78,6 +78,19 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .hs-row button { padding: 0 14px; font-size: 1rem; }
 .overlay .hs-msg { margin: 0; font-size: .9rem; min-height: 1.2em; }
 .top { background: var(--btn); border: 2px solid var(--frame); border-radius: 14px; padding: 10px 14px; }
+.best-btn span { white-space: nowrap; }
+.best-btn { cursor: pointer; box-shadow: 0 4px 0 var(--frame); }
+.best-btn:active { transform: translateY(4px); box-shadow: 0 0 0 var(--frame); }
+.top-pop {
+  position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
+  padding-block: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: rgba(20, 20, 30, .5);
+}
+.top-pop .top { width: 100%; max-width: 340px; max-height: 100%; overflow-y: auto; box-sizing: border-box; box-shadow: 0 6px 0 var(--frame); }
+.top-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+.top-head h2 { margin: 0; }
+.top-close { font-size: .95rem; padding: 6px 14px; }
 .top h2 { margin: 0 0 6px; font-size: 1.1rem; }
 .top ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .top li { display: grid; grid-template-columns: 2ch 1fr auto; gap: 10px; padding: 4px 0; font-variant-numeric: tabular-nums; border-bottom: 1px dashed rgba(47, 58, 31, .18); }
@@ -96,7 +109,7 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
     <div class="scores">
       <div class="score"><span>Score</span><b id="score">0</b></div>
       <div class="score"><span>Lives</span><b id="lives">3</b></div>
-      <div class="score"><span>Best</span><b id="best">0</b></div>
+      <button class="score best-btn" id="bestBtn" aria-label="Best score. Show the Top 10"><span>Best 🏆</span><b id="best">0</b></button>
     </div>
   </header>
 
@@ -119,10 +132,12 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
     <button id="launch">Launch</button>
     <button id="right" aria-label="Move right">▶</button>
   </div>
-  <section class="top" aria-labelledby="topTitle">
-    <h2 id="topTitle">Top 10</h2>
-    <ol id="hsList"><li class="hs-empty">Loading scores…</li></ol>
-  </section>
+  <div class="top-pop" id="topPop" hidden>
+    <section class="top" role="dialog" aria-modal="true" aria-labelledby="topTitle">
+      <div class="top-head"><h2 id="topTitle">Top 10</h2><button class="top-close" id="topClose">Close</button></div>
+      <ol id="hsList"><li class="hs-empty">Loading scores…</li></ol>
+    </section>
+  </div>
 </div>
 
 <script src="scores.js"></script>
@@ -445,6 +460,7 @@ document.getElementById('launch').addEventListener('pointerdown', e => { e.preve
 
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT') return;   // typing a name
+  if (!topPop.hidden) { if (e.key === 'Escape') topPop.hidden = true; return; }
   if (e.key === 'ArrowLeft' || e.key === 'a') { e.preventDefault(); hold = -1; targetX = null; }
   else if (e.key === 'ArrowRight' || e.key === 'd') { e.preventDefault(); hold = 1; targetX = null; }
   else if (e.key === ' ') { e.preventDefault(); launch(); }
@@ -467,6 +483,15 @@ document.addEventListener('visibilitychange', () => { if (document.hidden && run
 newGame();
 HighScores.init('breakout');
 requestAnimationFrame(frame);
+
+// Top 10 popup opens from the Best button
+const topPop = document.getElementById('topPop');
+document.getElementById('bestBtn').addEventListener('click', () => {
+  if (running && !paused) togglePause();
+  HighScores.load(); topPop.hidden = false; document.getElementById('topClose').focus();
+});
+document.getElementById('topClose').addEventListener('click', () => { topPop.hidden = true; });
+topPop.addEventListener('click', e => { if (e.target === topPop) topPop.hidden = true; });
 </script>
 
 </body>

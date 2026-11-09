@@ -68,5 +68,5 @@ const HighScores = (() => {
     load();
   }
 
-  return {init, offer, hide};
+  return {init, offer, hide, load};
 })();
